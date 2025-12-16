@@ -1,60 +1,74 @@
-// قمنا بتحديث رقم الإصدار لإجبار المتصفح على تحديث الكاش
-const CACHE_NAME = 'lira24-v7-fix';
+const CACHE_NAME = 'lira24-v10-final'; // تم رفع الإصدار لإجبار المتصفح على التحديث
 
-const urlsToCache = [
+// الملفات المحلية الأساسية فقط (بدونها لا يعمل التطبيق offline)
+const CORE_ASSETS = [
   './index.html',
   './manifest.json',
-  // لاحظ: قمنا بتحديث أسماء الأيقونات هنا لتطابق الموجود في مجلد assets
   './assets/icon-192.png',
   './assets/icon-512.png',
-  // تأكد أن هذه الصور موجودة، وإذا لم تكن موجودة احذف هذين السطرين ليعمل التطبيق
-  './assets/screenshot1.png',
-  './assets/screenshot2.png',
-  
-  // المكتبات الخارجية
-  'https://unpkg.com/react@18/umd/react.production.min.js',
-  'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
-  'https://unpkg.com/@babel/standalone/babel.min.js',
-  'https://html2canvas.hertzen.com/dist/html2canvas.min.js',
-  'https://cdn.tailwindcss.com',
-  'https://unpkg.com/lucide@latest',
-  'https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap'
 ];
 
+// 1. مرحلة التثبيت (Install)
 self.addEventListener('install', (event) => {
+  // تخطي الانتظار لتفعيل التحديث فوراً
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        console.log('Opened cache - Storing core assets...');
+        // نستخدم addAll للملفات الأساسية فقط
+        return cache.addAll(CORE_ASSETS);
+      })
+      .catch((error) => {
+        console.error('Core assets precaching failed:', error);
       })
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  // استراتيجية Cache First للملفات الثابتة
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-  );
-});
-
+// 2. مرحلة التفعيل (Activate) - تنظيف الكاش القديم
 self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
+    })
+  );
+  // جعل الـ Service Worker يتحكم في الصفحة فوراً
+  return self.clients.claim();
+});
+
+// 3. استراتيجية الجلب (Fetch) - Stale-While-Revalidate
+// هذا يسمح بظهور المحتوى المخزن فوراً (سرعة)، ويقوم بتحديثه في الخلفية (حداثة البيانات).
+self.addEventListener('fetch', (event) => {
+  // تجاهل الطلبات التي ليست http/https
+  if (!event.request.url.startsWith('http')) return;
+
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        
+        // التحقق من صحة الاستجابة قبل التخزين (لجميع الملفات بما فيها الخارجية والجديدة)
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic' || networkResponse.type === 'cors') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+         // في حالة فشل الاتصال بالشبكة (أثناء عدم الاتصال)، يتم استخدام cachedResponse إن وجد.
+      });
+
+      // إرجاع النسخة المخزنة فوراً إذا وجدت، وإلا ننتظر نتيجة الشبكة
+      return cachedResponse || fetchPromise;
     })
   );
 });
