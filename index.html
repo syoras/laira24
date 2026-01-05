@@ -1317,9 +1317,11 @@
 
                         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <div className="flex items-center gap-5">
-                                <div className="w-16 h-16 rounded-3xl bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center text-3xl border border-white/20 relative">
-                                    <div className="absolute inset-0 bg-brand-primary/10 rounded-3xl animate-pulse"></div>
-                                    <IconRenderer icon={Icons.Send} />
+                                <div className="w-16 h-16 rounded-3xl bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_0_20px_rgba(46,208,110,0.2)] flex items-center justify-center text-3xl border border-white/20 dark:border-brand-primary/20 relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-brand-primary/10 dark:bg-brand-primary/20 rounded-3xl animate-pulse"></div>
+                                    <div className="relative text-brand-dark dark:text-brand-primary">
+                                        <IconRenderer icon={Icons.Send} />
+                                    </div>
                                 </div>
                                 <div className="flex flex-col">
                                     <h3 className="text-xl font-black text-gray-900 dark:text-white leading-tight mb-1">حوالات ليرة 24</h3>
@@ -1347,8 +1349,11 @@
 
                         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <div className="flex items-center gap-5">
-                                <div className="w-16 h-16 rounded-3xl bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center text-3xl border border-white/20 relative theme-icon-bg">
-                                    <IconRenderer icon={Icons.Chart} />
+                                <div className="w-16 h-16 rounded-3xl bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_0_20px_rgba(159,232,112,0.2)] flex items-center justify-center text-3xl border border-white/20 dark:border-brand-light/20 relative overflow-hidden theme-icon-bg">
+                                    <div className="absolute inset-0 bg-brand-light/10 dark:bg-brand-light/20 rounded-3xl animate-pulse"></div>
+                                    <div className="relative text-brand-dark dark:text-brand-light">
+                                        <IconRenderer icon={Icons.Chart} />
+                                    </div>
                                 </div>
                                 <div className="flex flex-col">
                                     <h3 className="text-xl font-black text-gray-900 dark:text-white leading-tight mb-1">حاسبة تحليل العملات</h3>
@@ -1377,9 +1382,11 @@
 
                         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <div className="flex items-center gap-5">
-                                <div className="w-16 h-16 rounded-3xl bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center text-3xl border border-white/20 relative">
-                                    <div className="absolute inset-0 bg-yellow-500/10 rounded-3xl animate-pulse"></div>
-                                    <IconRenderer icon={Icons.Coins} />
+                                <div className="w-16 h-16 rounded-3xl bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_0_20px_rgba(234,179,8,0.2)] flex items-center justify-center text-3xl border border-white/20 dark:border-yellow-500/20 relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-yellow-500/10 dark:bg-yellow-500/20 rounded-3xl animate-pulse"></div>
+                                    <div className="relative text-brand-dark dark:text-yellow-400">
+                                        <IconRenderer icon={Icons.Coins} />
+                                    </div>
                                 </div>
                                 <div className="flex flex-col">
                                     <h3 className="text-xl font-black text-gray-900 dark:text-white leading-tight mb-1">أسعار الذهب بالتفصيل</h3>
