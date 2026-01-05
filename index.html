@@ -1946,7 +1946,7 @@
 
                 return (
                     <div className="pb-24 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
-                        <Header title="أسعار الذهب" subtitle="تحديث لحظي من الصاغة" time={dbLastUpdate} setActiveTab={setActiveTab} loadData={loadData} />
+                        <Header title="أسعار الذهب" subtitle="تحديث لحظي من الصاغة" time={dbLastUpdate} showBack={true} onBack={() => setActiveTab('home')} setActiveTab={setActiveTab} loadData={loadData} />
                         <div className="px-4 pt-4">
                             {loading ? <div className="text-center py-10">جاري التحميل...</div> : (
                                 <>
@@ -2131,7 +2131,7 @@
 
                 return (
                     <div className="pb-24 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
-                        <Header title="الحاسبة والتحليل" subtitle="حساب دقيق لكافة العملات" time={dbLastUpdate} setActiveTab={setActiveTab} loadData={loadData} />
+                        <Header title="الحاسبة والتحليل" subtitle="حساب دقيق لكافة العملات" time={dbLastUpdate} showBack={true} onBack={() => setActiveTab('home')} setActiveTab={setActiveTab} loadData={loadData} />
                         <div className="px-4 pt-4">
                             <div className="glass-card rounded-2xl shadow-sm p-6 mb-4">
 
@@ -2801,7 +2801,7 @@
                     {activeTab === 'settings' && renderSettings()}
                     {activeTab === 'transfer' && renderTransfer()}
                     {activeTab === 'global' && renderGlobal()}
-                    {activeTab !== 'transfer' && activeTab !== 'settings' && <NavBar activeTab={activeTab} setActiveTab={setActiveTab} />}
+                    {activeTab !== 'transfer' && activeTab !== 'settings' && activeTab !== 'gold' && activeTab !== 'calc' && <NavBar activeTab={activeTab} setActiveTab={setActiveTab} />}
                 </div>
             );
         }
