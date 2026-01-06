@@ -1589,7 +1589,16 @@
 
             const [goldOrder, setGoldOrder] = useState(() => { try { return JSON.parse(localStorage.getItem('goldOrder')) || []; } catch { return []; } });
 
-            const [pinnedGold, setPinnedGold] = useState(() => { try { return JSON.parse(localStorage.getItem('pinnedGold')) || []; } catch { return []; } });
+            const [pinnedGold, setPinnedGold] = useState(() => {
+                try {
+                    const stored = localStorage.getItem('pinnedGold');
+                    if (stored) return JSON.parse(stored);
+                    // Default list if nothing stored (First Run)
+                    return [];
+                } catch {
+                    return [];
+                }
+            });
 
             const [energyOrder, setEnergyOrder] = useState(() => {
                 try {
@@ -1724,6 +1733,8 @@
 
                     if (defaultPinned.length > 0) {
                         setPinnedGold(defaultPinned);
+                        // Save immediately to avoid race conditions on mobile/async re-renders
+                        localStorage.setItem('pinnedGold', JSON.stringify(defaultPinned));
                     }
                 }
 
