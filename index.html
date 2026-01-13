@@ -798,6 +798,137 @@
             );
         };
 
+        // --- App Summary Export Card ---
+        const AppSummaryExportCard = ({ id, currencies, gold, time }) => {
+            return (
+                <div
+                    id={id}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: '-9999px',
+                        width: '1080px',
+                        minHeight: '1080px',
+                        height: 'auto',
+                        zIndex: -1,
+                        background: '#f8fafc',
+                        fontFamily: "'Cairo', sans-serif",
+                        direction: 'rtl',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                        paddingBottom: '40px'
+                    }}
+                >
+                    {/* Background */}
+                    <div className="absolute inset-0 opacity-40 pointer-events-none">
+                        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id={`grid-${id}`} width="60" height="60" patternUnits="userSpaceOnUse">
+                                    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill={`url(#grid-${id})`} />
+                        </svg>
+                    </div>
+
+                    {/* Glow Orbs */}
+                    <div className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] bg-brand-primary/10 rounded-full blur-[150px]"></div>
+                    <div className="absolute bottom-[-200px] right-[-200px] w-[700px] h-[700px] bg-brand-light/20 rounded-full blur-[150px]"></div>
+
+                    {/* Header */}
+                    <div className="flex justify-between items-center p-12 pb-8 relative z-10">
+                        <div className="flex items-center gap-5">
+                            <div className="w-24 h-24 bg-brand-dark rounded-3xl flex items-center justify-center shadow-2xl shadow-brand-dark/20">
+                                <span className="text-brand-primary font-black text-5xl">24</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <h1 className="text-brand-dark text-5xl font-black leading-none mb-1">الليرة 24</h1>
+                                <span className="text-brand-primary text-2xl tracking-[0.25em] uppercase font-bold">Laira 24 App</span>
+                            </div>
+                        </div>
+                        <div className="bg-white px-8 py-4 rounded-full flex items-center justify-center shadow-sm border border-gray-100">
+                            <span className="text-brand-dark font-bold text-3xl num-en leading-none pb-2">{formatDateForExport(time)}</span>
+                        </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 px-12 py-4 relative z-10 flex flex-col gap-8">
+
+                        {/* Currencies Section */}
+                        {currencies && currencies.length > 0 ? (
+                            <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl">
+                                <h2 className="text-3xl font-black text-gray-800 mb-8 flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-3xl">💵</div>
+                                    أسعار العملات مقابل الليرة السورية
+                                </h2>
+                                <div className="grid grid-cols-2 gap-6">
+                                    {currencies.map((c, i) => {
+                                        const { flag } = getFlagAndCode(c.name);
+                                        return (
+                                            <div key={i} className="flex justify-between items-center bg-gray-50/80 rounded-3xl p-6 border border-gray-100">
+                                                <div className="flex items-center gap-4">
+                                                    <span className="text-5xl">{flag}</span>
+                                                    <span className="text-3xl font-bold text-gray-700">{c.code}</span>
+                                                </div>
+                                                <span className="text-4xl font-black text-brand-primary num-en">{parseFloat(c.buy_price).toLocaleString('en-US')}</span>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        ) : null}
+
+                        {/* Gold Section */}
+                        {gold && gold.length > 0 ? (
+                            <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl">
+                                <h2 className="text-3xl font-black text-gray-800 mb-8 flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-2xl bg-yellow-50 text-yellow-500 flex items-center justify-center text-3xl">🏆</div>
+                                    أسعار الذهب مقابل الليرة السورية
+                                </h2>
+                                <div className="grid grid-cols-2 gap-6">
+                                    {gold.map((g, i) => {
+                                        const isOunce = g.description.includes('أونصة') || g.description.includes('Ounce');
+                                        return (
+                                            <div key={i} className="flex justify-between items-center bg-yellow-50/40 rounded-3xl p-6 border border-yellow-100/60">
+                                                <span className="text-2xl font-bold text-gray-700">{g.description}</span>
+                                                <span className="text-4xl font-black text-yellow-600 num-en">
+                                                    {isOunce ? '$' : ''}{parseFloat(g.buy_price).toLocaleString('en-US')}
+                                                </span>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        ) : null}
+
+                    </div>
+
+                    {/* Footer */}
+                    <div className="px-12 pt-8 pb-12 relative z-10 mt-auto">
+                        <div className="bg-white rounded-[2.5rem] p-10 shadow-2xl border border-gray-100 flex justify-between items-center">
+                            <div className="flex items-center gap-6">
+                                <div className="bg-[#229ED9] w-20 h-20 rounded-3xl flex items-center justify-center shadow-lg shadow-blue-500/20 rotate-3">
+                                    <svg viewBox="0 0 24 24" fill="white" width="48" height="48"><path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l.002.001-.314 4.692c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z"></path></svg>
+                                </div>
+                                <div className="flex flex-col justify-center gap-1">
+                                    <p className="text-gray-500 text-2xl font-bold">قناتنا على تيليجرام</p>
+                                    <p className="text-brand-dark text-4xl font-black tracking-wider num-en leading-none">t.me/Lairas24</p>
+                                </div>
+                            </div>
+                            <div className="flex flex-col items-end">
+                                <span className="text-gray-400 font-bold text-xl">تطبيق الليرة 24</span>
+                                <span className="text-brand-primary font-bold text-sm">أفضل الأسعار لحظة بلحظة</span>
+                            </div>
+                            <div className="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center border border-gray-100 -rotate-3">
+                                <img src="./assets/icon.png" alt="App" className="w-14 h-14 object-contain" onError={(e) => e.target.style.display = 'none'} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // --- Currency Modal ---
         const CurrencyDetailModal = ({ currency, onClose, onMove, time }) => {
             if (!currency) return null;
@@ -1507,7 +1638,7 @@
             </div>
         );
 
-        const Header = ({ title, subtitle, time, showDate = true, showBack = false, onBack, setActiveTab, loadData }) => (
+        const Header = ({ title, subtitle, time, showDate = true, showBack = false, onBack, setActiveTab, loadData, onDownload }) => (
             <div className="relative z-[60] px-4 pt-4 mb-2">
                 <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-white/95 to-brand-light/20 dark:from-brand-dark/95 dark:to-brand-dark/90 backdrop-blur-2xl border-2 border-white/80 dark:border-brand-primary/30 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] transition-all duration-500">
                     {/* Subtle Gradient Accent */}
@@ -1541,6 +1672,14 @@
                             )}
 
                             <div className="flex items-center gap-2">
+                                {onDownload && (
+                                    <button
+                                        onClick={onDownload}
+                                        className="w-10 h-10 rounded-2xl bg-white/80 dark:bg-white/5 text-gray-800 dark:text-white shadow-sm border border-gray-100 dark:border-white/5 flex items-center justify-center hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all group"
+                                    >
+                                        <IconRenderer icon={Icons.Camera} />
+                                    </button>
+                                )}
                                 {!showBack && (
                                     <button
                                         onClick={loadData}
@@ -1921,7 +2060,8 @@
 
                 return (
                     <div className="pb-24 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
-                        <Header title="أسعار الصرف" subtitle="مباشر مقابل الليرة السورية" time={dbLastUpdate} setActiveTab={setActiveTab} loadData={loadData} />
+                        <AppSummaryExportCard id="app-summary-card" currencies={visibleCurrencies} gold={visibleGold} time={dbLastUpdate} />
+                        <Header title="أسعار الصرف" subtitle="مباشر مقابل الليرة السورية" time={dbLastUpdate} setActiveTab={setActiveTab} loadData={loadData} onDownload={() => handleScreenshot('app-summary-card', 'Daily-Report')} />
                         <div className="px-4 pt-4">
                             {loading ? <SkeletonList count={4} /> : (
                                 <>
